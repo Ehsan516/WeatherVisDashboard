@@ -1,4 +1,5 @@
 So for this to run, I have a .env file with my API key:
+NOTE: The API key, which should've been ignored by gitignore, is not active so running it with that default API key will not work.
 
 .env:
 OPENWEATHER_API_KEY=add_your_api_key #my api key
