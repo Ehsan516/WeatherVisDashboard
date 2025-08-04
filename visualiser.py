@@ -3,16 +3,8 @@ import pandas as pd
 
 
 def plot_temperature_trend(df: pd.DataFrame, unit_symbol: str) -> px.line:
-    """
-    create a line plot for temperature trend over time.
 
-    args:
-        df: DataFrame with 'Date' and 'Temperature' columns
-        unit_symbol: Temperature unit symbol (°C or °F)
-
-    Returns:
-        Plotly line figure
-    """
+    #line plot for temperature trend over time.
     fig = px.line(
         df,
         x="Date",
@@ -29,16 +21,7 @@ def plot_temperature_trend(df: pd.DataFrame, unit_symbol: str) -> px.line:
 
 
 def plot_weather_metrics(df: pd.DataFrame, unit_symbol: str) -> px.bar:
-    """
-    Create a bar plot for weather metrics (humidity, wind speed).
-
-    Args:
-        df: DataFrame with 'Date', 'Humidity', and 'Wind Speed' columns
-        unit_symbol: Temperature unit symbol (°C or °F)
-
-    Returns:
-        Plotly bar figure
-    """
+    #weather metrics (humidity, wind speed).
     fig = px.bar(
         df,
         x="Date",

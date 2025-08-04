@@ -15,25 +15,32 @@ API_KEY = os.getenv("OPENWEATHER_API_KEY")
 st.set_page_config(page_title="Weather Dashboard", layout="wide", initial_sidebar_state="expanded")
 
 
+st.markdown(
+"""
+    <style>
+    .stApp {
+        background-color: #1e1e1e;
+        color: white !important;
+    }
+    .sidebar .sidebar-content {
+        background-color: #2e2e2e;
+        color: white !important;
+    }
+    .stMarkdown, .stMetric, .stMetricLabel, .stMetricValue, .stText, [data-testid="stMetricLabel"], [data-testid="stMetricValue"], [data-testid="stMarkdownContainer"], h1, h2, h3, [data-testid="stHeader"], [data-testid="stAppViewContainer"] h1, [data-testid="stAppViewContainer"] h2, [data-testid="stAppViewContainer"] h3 {
+        color: white !important;
+    }
+    </style>
+    """, unsafe_allow_html=True
+)
+
 def main():
-    st.title("🌦️ Weather Data Visualization Dashboard")
+    st.title("🌦️ Weather Data Visualisation Dashboard")
     #sidebar for user inputs
     with st.sidebar:
         st.header("Settings")
         city = st.text_input("Enter City Name", value="London")
         unit = st.selectbox("Temperature Unit", ["Celsius (°C)", "Fahrenheit (°F)"])
         refresh_interval = st.slider("Auto-refresh Interval (minutes)", 1, 60, 5)
-        theme = st.selectbox("Theme", ["Light", "Dark"])
-
-        if theme == "Dark":
-            st.markdown(
-                """
-                <style>
-                .stApp { background-color: #1e1e1e; color: white; }
-                .sidebar .sidebar-content { background-color: #2e2e2e; }
-                </style>
-                """, unsafe_allow_html=True
-            )
 
         if st.button("Refresh Data"):
             st.cache_data.clear()
