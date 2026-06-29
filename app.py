@@ -22,7 +22,7 @@ st.markdown(
         background-color: #1e1e1e;
         color: white !important;
     }
-    .sidebar .sidebar-content {
+    [data-testid="stSidebar"] {
         background-color: #2e2e2e;
         color: white !important;
     }
@@ -74,7 +74,8 @@ def main():
                 st.write(f"Sunrise: {sunrise} | Sunset: {sunset}")
 
                 # Weather icon (using emoji for simplicity)
-                icon_map = {"clear": "☀️", "clouds": "☁️", "rain": "🌧️", "snow": "❄️"}
+                icon_map = {"clear": "☀️", "clouds": "☁️", "rain": "🌧️", "snow": "❄️",  "drizzle": "🌦️", "thunderstorm": "⛈️",
+                            "mist": "🌫️", "fog": "🌫️", "haze": "🌫️",}
                 icon = icon_map.get(current_weather["weather"][0]["main"].lower(), "🌦️")
                 st.markdown(f"## {icon}")
 
@@ -101,6 +102,9 @@ def main():
                 # Plot temperature trend
                 fig_temp = plot_temperature_trend(df_forecast, unit_symbol)
                 st.plotly_chart(fig_temp, use_container_width=True)
+
+                fig_metrics = plot_weather_metrics(df_forecast, unit_symbol)
+                st.plotly_chart(fig_metrics, use_container_width=True)
 
                 # Display forecast table
                 if st.checkbox("Show Forecast Table"):
