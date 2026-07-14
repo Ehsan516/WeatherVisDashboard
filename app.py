@@ -1,7 +1,9 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+import json
 from datetime import datetime
+from pathlib import Path
 from data_fetcher import get_current_weather, get_forecast
 from visualiser import plot_temperature_trend, plot_weather_metrics
 from dotenv import load_dotenv
@@ -10,6 +12,22 @@ import os
 #environment variables
 load_dotenv() #.env is where my api key is kept, you can add yours if you pulled form my github
 API_KEY = os.getenv("OPENWEATHER_API_KEY")
+
+#favorite cities are stored locally so they persist between sessions
+FAVORITES_FILE = Path(__file__).parent / "favorites.json"
+
+
+def load_favorites():
+    if FAVORITES_FILE.exists():
+        try:
+            return json.loads(FAVORITES_FILE.read_text())
+        except (json.JSONDecodeError, OSError):
+            return []
+    return []
+
+
+def save_favorites(favorites):
+    FAVORITES_FILE.write_text(json.dumps(favorites, indent=2))
 
 #confiugring Streamlit page
 st.set_page_config(page_title="Weather Dashboard", layout="wide", initial_sidebar_state="expanded")
@@ -35,15 +53,44 @@ st.markdown(
 
 def main():
     st.title("🌦️ Weather Data Visualisation Dashboard")
+
+    if "favorites" not in st.session_state:
+        st.session_state.favorites = load_favorites()
+    if "city_input" not in st.session_state:
+        st.session_state.city_input = "London"
+
     #sidebar for user inputs
     with st.sidebar:
         st.header("Settings")
-        city = st.text_input("Enter City Name", value="London")
+        city = st.text_input("Enter City Name", key="city_input")
         unit = st.selectbox("Temperature Unit", ["Celsius (°C)", "Fahrenheit (°F)"])
         refresh_interval = st.slider("Auto-refresh Interval (minutes)", 1, 60, 5)
 
         if st.button("Refresh Data"):
             st.cache_data.clear()
+
+        st.markdown("---")
+        st.subheader("⭐ Favorite Cities")
+        if st.session_state.favorites:
+            for fav in st.session_state.favorites:
+                fav_col, remove_col = st.columns([3, 1])
+                if fav_col.button(fav, key=f"fav_select_{fav}", use_container_width=True):
+                    st.session_state.city_input = fav
+                    st.rerun()
+                if remove_col.button("✕", key=f"fav_remove_{fav}"):
+                    st.session_state.favorites.remove(fav)
+                    save_favorites(st.session_state.favorites)
+                    st.rerun()
+        else:
+            st.caption("No favorites yet — add the current city below.")
+
+        if city:
+            if city in st.session_state.favorites:
+                st.caption(f"★ \"{city}\" is in your favorites")
+            elif st.button(f"☆ Add \"{city}\" to Favorites"):
+                st.session_state.favorites.append(city)
+                save_favorites(st.session_state.favorites)
+                st.rerun()
 
     #convert selected unit to API format
     unit_api = "metric" if unit == "Celsius (°C)" else "imperial"
